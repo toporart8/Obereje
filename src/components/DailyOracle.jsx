@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dailySigns } from '../utils/predictions';
 import { validatePromoCode, markPromoCodeAsUsed } from '../utils/promoCodes';
@@ -18,6 +18,15 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
     const [isPremiumMode, setIsPremiumMode] = useState(false);
     const [premiumCards, setPremiumCards] = useState([]); // Array of 4 card objects
     const [revealedPremiumCards, setRevealedPremiumCards] = useState([]); // Array of indices (0, 1, 2) for premium mode
+    const premiumRef = useRef(null);
+
+    useEffect(() => {
+        if (isPremiumMode && premiumRef.current) {
+            setTimeout(() => {
+                premiumRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    }, [isPremiumMode]);
 
     useEffect(() => {
         if (isOpen) {
@@ -191,9 +200,14 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
                             </svg>
                         </button>
 
-                        <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold via-parchment to-gold uppercase tracking-widest font-serif text-center mb-6 mt-2 relative z-10 drop-shadow-sm">
+                        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold via-parchment to-gold uppercase tracking-widest font-serif text-center mb-4 mt-4 relative z-10 drop-shadow-sm">
                             {isPremiumMode && hasPredictedToday ? 'Расклад Мастера' : 'Карта Дня'}
                         </h2>
+                        {!hasPredictedToday && (
+                            <p className="text-bronze/60 text-sm italic uppercase tracking-[0.2em] font-serif text-center -mt-2 mb-8 relative z-10">
+                                выбирай сердцем
+                            </p>
+                        )}
 
                         <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 px-2">
                             {!hasPredictedToday ? (
@@ -245,12 +259,7 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
                                         </div>
                                     </div>
 
-                                    {/* Instruction Text */}
-                                    <div className="text-center px-4 mb-8 -mt-16 relative z-20">
-                                        <p className="text-bronze/90 text-2xl sm:text-3xl font-serif tracking-wide leading-relaxed drop-shadow-md">
-                                            - Сосредоточься на главном. Загадай то, что тревожит душу и сделай свой выбор.
-                                        </p>
-                                    </div>
+
                                 </div>
                             ) : (
                                 // RESULT VIEW
@@ -261,7 +270,7 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
                                 >
                                     {isPremiumMode ? (
                                         // PREMIUM 4-CARD SPREAD (2x2 Grid)
-                                        <div className="flex flex-col items-center space-y-8 py-4">
+                                        <div ref={premiumRef} className="flex flex-col items-center space-y-8 py-4">
                                             <h3 className="text-gold text-lg font-serif uppercase tracking-[0.2em] text-center border-b border-gold/20 pb-2 w-full">
                                                 Расклад "Мудрость Предков"
                                             </h3>
@@ -315,7 +324,7 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
                                                                     >
                                                                         <p className="text-ash/60 text-[8px] uppercase tracking-tighter mb-1 font-serif">{descriptors[index]}</p>
                                                                         <p className="text-parchment italic text-[9px] sm:text-[10px] leading-tight">
-                                                                            "{sign.text.split('.')[0]}..."
+                                                                            {sign.text.split('.')[0]}...
                                                                         </p>
                                                                     </motion.div>
                                                                 )}
@@ -338,11 +347,9 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
                                             </div>
 
                                             <div className="bg-primary/50 border border-bronze/30 p-5 rounded-lg relative mb-8 w-full">
-                                                <div className="text-bronze text-4xl font-serif absolute -top-4 -left-2 opacity-30">"</div>
                                                 <p className="text-parchment italic text-sm relative z-10 leading-relaxed text-center">
                                                     {selectedSign?.text}
                                                 </p>
-                                                <div className="text-bronze text-4xl font-serif absolute -bottom-8 -right-2 opacity-30 rotate-180">"</div>
                                             </div>
                                         </div>
                                     )}

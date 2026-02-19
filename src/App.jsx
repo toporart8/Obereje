@@ -6,6 +6,7 @@ import { getSlavicHall, getZoroastrianTotem, getZodiac } from './utils/logic';
 import { products, categories } from './utils/products';
 import { getUpcomingHolidays, PRODUCTS_DB } from './utils/holidays';
 import SketchGenerator from './components/SketchGenerator';
+import LegacyBook from './components/LegacyBook';
 
 
 const CONTACTS = {
@@ -43,6 +44,7 @@ function App() {
   const [isOracleOpen, setIsOracleOpen] = useState(false);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [isSketchOpen, setIsSketchOpen] = useState(false);
+  const [isLegacyBookOpen, setIsLegacyBookOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
 
   // Maintenance Timer State
@@ -238,6 +240,13 @@ function App() {
                 className="w-full py-4 border border-gold/30 bg-primary/40 text-gold text-sm font-bold uppercase tracking-widest rounded-lg hover:bg-gold/10 hover:border-gold/60 transition-all shadow-[0_0_15px_rgba(212,175,55,0.1)] hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] backdrop-blur-sm group"
               >
                 <span className="group-hover:text-parchment transition-colors duration-300">✦ Твоя Карта Дня ✦</span>
+              </button>
+
+              <button
+                onClick={() => setIsLegacyBookOpen(true)}
+                className="w-full py-4 border border-gold/30 bg-primary/40 text-gold text-sm font-bold uppercase tracking-widest rounded-lg hover:bg-gold/10 hover:border-gold/60 transition-all shadow-[0_0_15px_rgba(212,175,55,0.1)] hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] backdrop-blur-sm group mt-3"
+              >
+                <span className="group-hover:text-parchment transition-colors duration-300">✦ Книга Рода ✦</span>
               </button>
             </div>
 
@@ -802,6 +811,8 @@ function App() {
           ))}
         </div>
       </div>
+
+      <LegacyBook isOpen={isLegacyBookOpen} onClose={() => setIsLegacyBookOpen(false)} />
 
       <DailyOracle
         isOpen={isOracleOpen}
