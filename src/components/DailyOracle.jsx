@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dailySigns } from '../utils/predictions';
 import { validatePromoCode, markPromoCodeAsUsed } from '../utils/promoCodes';
+import DonationInquiry from './DonationInquiry';
 
 const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
     const [hasPredictedToday, setHasPredictedToday] = useState(false);
@@ -10,6 +11,7 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
     const [shuffledCards, setShuffledCards] = useState([]);
     const [selectedCardIndex, setSelectedCardIndex] = useState(null);
     const [showDonationModal, setShowDonationModal] = useState(false);
+    const [isDonationInquiryOpen, setIsDonationInquiryOpen] = useState(false);
     const [showPromoInput, setShowPromoInput] = useState(false);
     const [promoCode, setPromoCode] = useState('');
     const [promoMessage, setPromoMessage] = useState('');
@@ -169,320 +171,341 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
     };
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
-                // onClick={onClose} 
-                >
+        <>
+            <AnimatePresence>
+                {isOpen && (
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.9, opacity: 0 }}
-                        className="bg-secondary border-2 border-dashed border-bronze/40 p-6 rounded-xl w-full max-w-sm shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md"
+                    // onClick={onClose} 
                     >
-                        {/* Stitching Detail */}
-                        <div className="absolute inset-[3px] border border-dashed border-bronze/20 rounded-[10px] pointer-events-none"></div>
-
-                        {/* Background Decoration */}
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
-
-                        {/* Close Button */}
-                        <button
-                            onClick={onClose}
-                            className="absolute top-4 right-4 text-ash hover:text-gold transition-colors z-20"
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-secondary border-2 border-dashed border-bronze/40 p-6 rounded-xl w-full max-w-sm shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+                            {/* Stitching Detail */}
+                            <div className="absolute inset-[3px] border border-dashed border-bronze/20 rounded-[10px] pointer-events-none"></div>
 
-                        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold via-parchment to-gold uppercase tracking-widest font-serif text-center mb-4 mt-4 relative z-10 drop-shadow-sm">
-                            {isPremiumMode && hasPredictedToday ? 'Расклад Мастера' : 'Карта Дня'}
-                        </h2>
-                        {!hasPredictedToday && (
-                            <p className="text-bronze/60 text-sm italic uppercase tracking-[0.2em] font-serif text-center -mt-2 mb-8 relative z-10">
-                                выбирай сердцем
-                            </p>
-                        )}
+                            {/* Background Decoration */}
+                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
 
-                        <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 px-2">
-                            {!hasPredictedToday ? (
-                                // CARD SELECTION VIEW
-                                <div className="flex flex-col items-center">
-                                    {/* CARD STACK LAYOUT */}
-                                    <div className="relative w-full flex justify-center mb-2 mt-4">
-                                        <div className="relative w-[240px] h-[650px]">
-                                            {shuffledCards.map((card, index) => {
-                                                const totalCards = shuffledCards.length;
-                                                const offsetPerCard = 50;
-                                                const reverseIndex = totalCards - 1 - index;
-                                                const yOffset = reverseIndex * offsetPerCard;
-                                                const xRandom = (index % 2 === 0 ? 1 : -1) * 5;
-                                                const isSelected = selectedCardIndex === index;
-                                                const isOtherSelected = selectedCardIndex !== null && !isSelected;
+                            {/* Close Button */}
+                            <button
+                                onClick={onClose}
+                                className="absolute top-4 right-4 text-ash hover:text-gold transition-colors z-20"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
 
-                                                return (
-                                                    <motion.div
-                                                        key={index}
-                                                        onClick={() => handleCardClick(index)}
-                                                        initial={{ opacity: 0, y: 1000 }}
-                                                        animate={{
-                                                            scale: isSelected ? 1.1 : 1,
-                                                            y: isSelected ? 200 : yOffset,
-                                                            x: isSelected ? 0 : xRandom,
-                                                            rotate: isSelected ? 0 : (index % 3 - 1) * 4,
-                                                            zIndex: isSelected ? 100 : index,
-                                                            opacity: isOtherSelected ? 0.3 : 1
-                                                        }}
-                                                        whileHover={{
-                                                            y: yOffset + 50,
-                                                            x: xRandom - 15,
-                                                            transition: { duration: 0.2, ease: "easeOut" }
-                                                        }}
-                                                        transition={{
-                                                            delay: index * 0.015,
-                                                            type: "spring",
-                                                            stiffness: 120,
-                                                            damping: 15
-                                                        }}
-                                                        className={`absolute top-0 left-0 aspect-[2/3] w-full bg-primary/80 rounded-lg cursor-pointer border ${isSelected ? 'border-amber shadow-[0_0_20px_rgba(220,38,38,0.8)]' : 'border-bronze/40 shadow-md'} overflow-hidden group hover:border-gold hover:shadow-[0_0_15px_rgba(255,215,0,0.5)]`}
-                                                    >
-                                                        <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-transparent pointer-events-none"></div>
-                                                        <img src="/images/card_back.jpg" alt="Card Back" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity grayscale hover:grayscale-0" />
-                                                    </motion.div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
+                            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold via-parchment to-gold uppercase tracking-widest font-serif text-center mb-4 mt-4 relative z-10 drop-shadow-sm">
+                                {isPremiumMode && hasPredictedToday ? 'Расклад Мастера' : 'Карта Дня'}
+                            </h2>
+                            {!hasPredictedToday && (
+                                <p className="text-bronze/60 text-sm italic uppercase tracking-[0.2em] font-serif text-center -mt-2 mb-8 relative z-10">
+                                    выбирай сердцем
+                                </p>
+                            )}
 
-
-                                </div>
-                            ) : (
-                                // RESULT VIEW
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="w-full"
-                                >
-                                    {isPremiumMode ? (
-                                        // PREMIUM 4-CARD SPREAD (2x2 Grid)
-                                        <div ref={premiumRef} className="flex flex-col items-center space-y-8 py-4">
-                                            <h3 className="text-gold text-lg font-serif uppercase tracking-[0.2em] text-center border-b border-gold/20 pb-2 w-full">
-                                                Расклад "Мудрость Предков"
-                                            </h3>
-
-                                            <div className="grid grid-cols-2 gap-4 w-full">
-                                                {premiumCards.map((sign, index) => {
-                                                    const isRevealed = revealedPremiumCards.includes(index);
-                                                    const titles = ["Ваш путь", "Преграда", "Помощь", "Итог"];
-                                                    const descriptors = ["Где вы сейчас:", "Что мешает:", "В чем сила:", "Куда ведет дорога:"];
+                            <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 px-2">
+                                {!hasPredictedToday ? (
+                                    // CARD SELECTION VIEW
+                                    <div className="flex flex-col items-center">
+                                        {/* CARD STACK LAYOUT */}
+                                        <div className="relative w-full flex justify-center mb-2 mt-4">
+                                            <div className="relative w-[240px] h-[650px]">
+                                                {shuffledCards.map((card, index) => {
+                                                    const totalCards = shuffledCards.length;
+                                                    const offsetPerCard = 50;
+                                                    const reverseIndex = totalCards - 1 - index;
+                                                    const yOffset = reverseIndex * offsetPerCard;
+                                                    const xRandom = (index % 2 === 0 ? 1 : -1) * 5;
+                                                    const isSelected = selectedCardIndex === index;
+                                                    const isOtherSelected = selectedCardIndex !== null && !isSelected;
 
                                                     return (
-                                                        <div key={index} className="flex flex-col items-center group">
-                                                            <div className="text-amber/80 text-[10px] font-serif uppercase tracking-[0.1em] mb-2 group-hover:text-gold transition-colors">
-                                                                {titles[index]}
-                                                            </div>
-
-                                                            <div
-                                                                className="relative w-full aspect-[2/3] cursor-pointer perspective-1000"
-                                                                onClick={() => handlePremiumCardClick(index)}
-                                                            >
-                                                                <motion.div
-                                                                    className="w-full h-full relative preserve-3d transition-transform duration-700"
-                                                                    style={{ transformStyle: 'preserve-3d' }}
-                                                                    animate={{ rotateY: isRevealed ? 180 : 0 }}
-                                                                >
-                                                                    {/* FRONT (Card Back) */}
-                                                                    <div className="absolute inset-0 backface-hidden rounded-lg overflow-hidden border border-bronze/40 shadow-lg group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all">
-                                                                        <img src="/images/card_back.jpg" alt="Card Back" className="w-full h-full object-cover" />
-                                                                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors"></div>
-                                                                    </div>
-
-                                                                    {/* BACK (Revealed Card) */}
-                                                                    <div
-                                                                        className="absolute inset-0 backface-hidden rounded-lg overflow-hidden border border-gold/40 bg-secondary shadow-[0_0_20px_rgba(212,175,55,0.2)]"
-                                                                        style={{ transform: 'rotateY(180deg)' }}
-                                                                    >
-                                                                        <img src={sign.image} alt={sign.title} className="w-full h-full object-cover" />
-                                                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-end p-2 text-center">
-                                                                            <h4 className="text-gold font-serif text-[10px] sm:text-xs leading-tight">{sign.title}</h4>
-                                                                        </div>
-                                                                    </div>
-                                                                </motion.div>
-                                                            </div>
-
-                                                            <AnimatePresence>
-                                                                {isRevealed && (
-                                                                    <motion.div
-                                                                        initial={{ opacity: 0, scale: 0.9 }}
-                                                                        animate={{ opacity: 1, scale: 1 }}
-                                                                        className="mt-3 p-2 bg-primary/40 border border-bronze/10 rounded text-center w-full"
-                                                                    >
-                                                                        <p className="text-ash/60 text-[8px] uppercase tracking-tighter mb-1 font-serif">{descriptors[index]}</p>
-                                                                        <p className="text-parchment italic text-[9px] sm:text-[10px] leading-tight">
-                                                                            {sign.text.split('.')[0]}...
-                                                                        </p>
-                                                                    </motion.div>
-                                                                )}
-                                                            </AnimatePresence>
-                                                        </div>
+                                                        <motion.div
+                                                            key={index}
+                                                            onClick={() => handleCardClick(index)}
+                                                            initial={{ opacity: 0, y: 1000 }}
+                                                            animate={{
+                                                                scale: isSelected ? 1.1 : 1,
+                                                                y: isSelected ? 200 : yOffset,
+                                                                x: isSelected ? 0 : xRandom,
+                                                                rotate: isSelected ? 0 : (index % 3 - 1) * 4,
+                                                                zIndex: isSelected ? 100 : index,
+                                                                opacity: isOtherSelected ? 0.3 : 1
+                                                            }}
+                                                            whileHover={{
+                                                                y: yOffset + 50,
+                                                                x: xRandom - 15,
+                                                                transition: { duration: 0.2, ease: "easeOut" }
+                                                            }}
+                                                            transition={{
+                                                                delay: index * 0.015,
+                                                                type: "spring",
+                                                                stiffness: 120,
+                                                                damping: 15
+                                                            }}
+                                                            className={`absolute top-0 left-0 aspect-[2/3] w-full bg-primary/80 rounded-lg cursor-pointer border ${isSelected ? 'border-amber shadow-[0_0_20px_rgba(220,38,38,0.8)]' : 'border-bronze/40 shadow-md'} overflow-hidden group hover:border-gold hover:shadow-[0_0_15px_rgba(255,215,0,0.5)]`}
+                                                        >
+                                                            <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-transparent pointer-events-none"></div>
+                                                            <img src="/images/card_back.jpg" alt="Card Back" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity grayscale hover:grayscale-0" />
+                                                        </motion.div>
                                                     );
                                                 })}
                                             </div>
                                         </div>
-                                    ) : (
-                                        // SINGLE CARD LAYOUT
-                                        <div className="flex flex-col items-center py-4">
-                                            <div className="relative w-64 aspect-[2/3] mb-8 rounded-xl overflow-hidden border-2 border-gold/50 shadow-[0_0_50px_rgba(159,43,43,0.5)]">
-                                                <img src={selectedSign?.image} alt={selectedSign?.title} className="w-full h-full object-cover" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                                                <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
-                                                    <h2 className="text-2xl text-gold font-serif mb-2 drop-shadow-lg">{selectedSign?.title}</h2>
-                                                    <p className="text-ash text-[10px] uppercase tracking-widest">{selectedSign?.date}</p>
+
+
+                                    </div>
+                                ) : (
+                                    // RESULT VIEW
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="w-full"
+                                    >
+                                        {isPremiumMode ? (
+                                            // PREMIUM 4-CARD SPREAD (2x2 Grid)
+                                            <div ref={premiumRef} className="flex flex-col items-center space-y-8 py-4">
+                                                <h3 className="text-gold text-lg font-serif uppercase tracking-[0.2em] text-center border-b border-gold/20 pb-2 w-full">
+                                                    Расклад "Мудрость Предков"
+                                                </h3>
+
+                                                <div className="grid grid-cols-2 gap-4 w-full">
+                                                    {premiumCards.map((sign, index) => {
+                                                        const isRevealed = revealedPremiumCards.includes(index);
+                                                        const titles = ["Ваш путь", "Преграда", "Помощь", "Итог"];
+                                                        const descriptors = ["Где вы сейчас:", "Что мешает:", "В чем сила:", "Куда ведет дорога:"];
+
+                                                        return (
+                                                            <div key={index} className="flex flex-col items-center group">
+                                                                <div className="text-amber/80 text-[10px] font-serif uppercase tracking-[0.1em] mb-2 group-hover:text-gold transition-colors">
+                                                                    {titles[index]}
+                                                                </div>
+
+                                                                <div
+                                                                    className="relative w-full aspect-[2/3] cursor-pointer perspective-1000"
+                                                                    onClick={() => handlePremiumCardClick(index)}
+                                                                >
+                                                                    <motion.div
+                                                                        className="w-full h-full relative preserve-3d transition-transform duration-700"
+                                                                        style={{ transformStyle: 'preserve-3d' }}
+                                                                        animate={{ rotateY: isRevealed ? 180 : 0 }}
+                                                                    >
+                                                                        {/* FRONT (Card Back) */}
+                                                                        <div className="absolute inset-0 backface-hidden rounded-lg overflow-hidden border border-bronze/40 shadow-lg group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all">
+                                                                            <img src="/images/card_back.jpg" alt="Card Back" className="w-full h-full object-cover" />
+                                                                            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors"></div>
+                                                                        </div>
+
+                                                                        {/* BACK (Revealed Card) */}
+                                                                        <div
+                                                                            className="absolute inset-0 backface-hidden rounded-lg overflow-hidden border border-gold/40 bg-secondary shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                                                                            style={{ transform: 'rotateY(180deg)' }}
+                                                                        >
+                                                                            <img
+                                                                                src={sign.image}
+                                                                                alt={sign.title}
+                                                                                className="w-full h-full object-cover"
+                                                                                onError={(e) => { e.target.src = "/images/lad1.jpg"; }}
+                                                                            />
+                                                                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent flex flex-col justify-end p-2 text-center">
+                                                                                <h4 className="text-gold font-serif text-[10px] sm:text-xs leading-tight">{sign.title}</h4>
+                                                                            </div>
+                                                                        </div>
+                                                                    </motion.div>
+                                                                </div>
+
+                                                                <AnimatePresence>
+                                                                    {isRevealed && (
+                                                                        <motion.div
+                                                                            initial={{ opacity: 0, scale: 0.9 }}
+                                                                            animate={{ opacity: 1, scale: 1 }}
+                                                                            className="mt-3 p-2 bg-primary/40 border border-bronze/10 rounded text-center w-full"
+                                                                        >
+                                                                            <p className="text-ash/60 text-[8px] uppercase tracking-tighter mb-1 font-serif">{descriptors[index]}</p>
+                                                                            <p className="text-parchment italic text-[9px] sm:text-[10px] leading-tight">
+                                                                                {sign.text.split('.')[0]}...
+                                                                            </p>
+                                                                        </motion.div>
+                                                                    )}
+                                                                </AnimatePresence>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
-
-                                            <div className="bg-primary/50 border border-bronze/30 p-5 rounded-lg relative mb-8 w-full">
-                                                <p className="text-parchment italic text-sm relative z-10 leading-relaxed text-center">
-                                                    {selectedSign?.text}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Action Buttons (Shared by both views) */}
-                                    <div className="space-y-3 w-full border-t border-bronze/20 pt-6">
-                                        <button
-                                            onClick={() => {
-                                                if (navigator.share) {
-                                                    const text = isPremiumMode
-                                                        ? `Мой Расклад Мастера в Обережье: ${premiumCards.map(s => s.title).join(', ')}`
-                                                        : `Мне выпала карта: ${selectedSign?.title}\n\n"${selectedSign?.text}"`;
-
-                                                    navigator.share({
-                                                        title: 'Оракул - Обережье',
-                                                        text: text,
-                                                        url: window.location.href
-                                                    });
-                                                }
-                                            }}
-                                            className="w-full py-3 bg-secondary/50 border border-bronze/50 text-gold hover:bg-bronze hover:text-white font-bold uppercase rounded transition-all text-xs tracking-widest"
-                                        >
-                                            Поделиться
-                                        </button>
-
-                                        <button
-                                            onClick={() => setShowDonationModal(true)}
-                                            className="w-full py-3 bg-gradient-to-r from-bronze to-amber hover:from-amber hover:to-bronze text-white font-bold uppercase rounded transition-all shadow-lg hover:shadow-red-900/50 border border-white/10 text-xs tracking-widest"
-                                        >
-                                            Поблагодарить Мастера
-                                        </button>
-
-                                        <a
-                                            href={telegramLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="block w-full py-3 bg-primary/30 border border-bronze/20 text-center text-ash hover:text-gold text-[10px] uppercase tracking-[0.2em] transition-all rounded"
-                                        >
-                                            Обсудить в Telegram
-                                        </a>
-
-                                        <button
-                                            onClick={handleReset}
-                                            className="w-full py-2 text-[10px] text-ash/50 hover:text-white uppercase tracking-widest transition-colors mt-4"
-                                        >
-                                            Сбросить и вернуться
-                                        </button>
-
-                                        {/* Promo Section (Shared) */}
-                                        <div className="mt-4 pt-4">
-                                            {!showPromoInput ? (
-                                                <button
-                                                    onClick={() => setShowPromoInput(true)}
-                                                    className="w-full text-[10px] text-gold/60 hover:text-gold font-bold uppercase tracking-[0.25em] transition-all"
-                                                >
-                                                    ✨ Использовать промокод
-                                                </button>
-                                            ) : (
-                                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                                    <input
-                                                        type="text"
-                                                        value={promoCode}
-                                                        onChange={(e) => setPromoCode(e.target.value)}
-                                                        placeholder="Введите код"
-                                                        className="w-full bg-primary/50 border border-bronze/30 rounded px-3 py-2 text-center text-parchment text-sm uppercase placeholder:text-ash/30 focus:outline-none focus:border-gold transition-colors"
+                                        ) : (
+                                            // SINGLE CARD LAYOUT
+                                            <div className="flex flex-col items-center py-4">
+                                                <div className="relative w-64 aspect-[2/3] mb-8 rounded-xl overflow-hidden border-2 border-gold/50 shadow-[0_0_50px_rgba(159,43,43,0.5)]">
+                                                    <img
+                                                        src={selectedSign?.image}
+                                                        alt={selectedSign?.title}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => { e.target.src = "/images/lad1.jpg"; }}
                                                     />
-                                                    {promoMessage && (
-                                                        <p className={`text-center text-[10px] ${promoMessage.includes('принят') ? 'text-green-400' : 'text-red-400'}`}>
-                                                            {promoMessage}
-                                                        </p>
-                                                    )}
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            onClick={handlePromoSubmit}
-                                                            className="flex-1 bg-bronze/20 hover:bg-bronze/40 text-gold border border-bronze/50 rounded py-2 text-[10px] uppercase tracking-widest transition-all"
-                                                        >
-                                                            Применить
-                                                        </button>
-                                                        <button
-                                                            onClick={() => setShowPromoInput(false)}
-                                                            className="px-4 text-ash hover:text-white text-[10px] uppercase tracking-widest"
-                                                        >
-                                                            Отмена
-                                                        </button>
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                                                    <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
+                                                        <h2 className="text-2xl text-gold font-serif mb-2 drop-shadow-lg">{selectedSign?.title}</h2>
+                                                        <p className="text-ash text-[10px] uppercase tracking-widest">{selectedSign?.date}</p>
                                                     </div>
                                                 </div>
-                                            )}
+
+                                                <div className="bg-primary/50 border border-bronze/30 p-5 rounded-lg relative mb-8 w-full">
+                                                    <p className="text-parchment italic text-sm relative z-10 leading-relaxed text-center">
+                                                        {selectedSign?.text}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="space-y-3 w-full border-t border-bronze/20 mt-2 pt-2">
+                                            <button
+                                                onClick={() => setIsDonationInquiryOpen(true)}
+                                                className="w-full py-3 border border-gold/30 bg-primary/40 text-gold text-xs font-bold uppercase tracking-[0.2em] rounded transition-all shadow-[0_0_15px_rgba(212,175,55,0.1)] hover:bg-gold/10 hover:border-gold/60"
+                                            >
+                                                У меня еще вопрос
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    if (navigator.share) {
+                                                        const text = isPremiumMode
+                                                            ? `Мой Расклад Мастера в Обережье: ${premiumCards.map(s => s.title).join(', ')}`
+                                                            : `Мне выпала карта: ${selectedSign?.title}\n\n"${selectedSign?.text}"`;
+
+                                                        navigator.share({
+                                                            title: 'Оракул - Обережье',
+                                                            text: text,
+                                                            url: window.location.href
+                                                        });
+                                                    }
+                                                }}
+                                                className="w-full py-3 bg-secondary/50 border border-bronze/50 text-gold/60 hover:bg-bronze hover:text-white font-bold uppercase rounded transition-all text-[10px] tracking-widest"
+                                            >
+                                                Поделиться
+                                            </button>
+
+                                            <button
+                                                onClick={() => setShowDonationModal(true)}
+                                                className="w-full py-3 bg-gradient-to-r from-bronze to-amber hover:from-amber hover:to-bronze text-white font-bold uppercase rounded transition-all shadow-lg hover:shadow-red-900/50 border border-white/10 text-xs tracking-widest"
+                                            >
+                                                Поблагодарить Мастера
+                                            </button>
+
+                                            <a
+                                                href={telegramLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="block w-full py-3 bg-primary/30 border border-bronze/20 text-center text-ash hover:text-gold text-[10px] uppercase tracking-[0.2em] transition-all rounded"
+                                            >
+                                                Обсудить в Telegram
+                                            </a>
+
+                                            <button
+                                                onClick={handleReset}
+                                                className="w-full py-2 text-[10px] text-ash/50 hover:text-white uppercase tracking-widest transition-colors mt-4"
+                                            >
+                                                Сбросить и вернуться
+                                            </button>
+
+                                            {/* Promo Section (Shared) */}
+                                            <div className="mt-4 pt-4">
+                                                {!showPromoInput ? (
+                                                    <button
+                                                        onClick={() => setShowPromoInput(true)}
+                                                        className="w-full text-[10px] text-gold/60 hover:text-gold font-bold uppercase tracking-[0.25em] transition-all"
+                                                    >
+                                                        ✨ Использовать промокод
+                                                    </button>
+                                                ) : (
+                                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                                        <input
+                                                            type="text"
+                                                            value={promoCode}
+                                                            onChange={(e) => setPromoCode(e.target.value)}
+                                                            placeholder="Введите код"
+                                                            className="w-full bg-primary/50 border border-bronze/30 rounded px-3 py-2 text-center text-parchment text-sm uppercase placeholder:text-ash/30 focus:outline-none focus:border-gold transition-colors"
+                                                        />
+                                                        {promoMessage && (
+                                                            <p className={`text-center text-[10px] ${promoMessage.includes('принят') ? 'text-green-400' : 'text-red-400'}`}>
+                                                                {promoMessage}
+                                                            </p>
+                                                        )}
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={handlePromoSubmit}
+                                                                className="flex-1 bg-bronze/20 hover:bg-bronze/40 text-gold border border-bronze/50 rounded py-2 text-[10px] uppercase tracking-widest transition-all"
+                                                            >
+                                                                Применить
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setShowPromoInput(false)}
+                                                                className="px-4 text-ash hover:text-white text-[10px] uppercase tracking-widest"
+                                                            >
+                                                                Отмена
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </div>
+                                    </motion.div>
+                                )}
+                            </div>
 
-                        {/* Donation Modal Overhead */}
-                        <AnimatePresence>
-                            {showDonationModal && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute inset-0 bg-primary/95 z-50 flex flex-col items-center justify-center p-6 text-center"
-                                >
-                                    <h3 className="text-xl font-bold text-gold mb-4 font-serif uppercase tracking-widest">Поддержка Проекта</h3>
-                                    <p className="text-ash text-sm mb-6">
-                                        Если вам понравился оракул, вы можете поддержать развитие мастерской любой суммой.
-                                    </p>
-                                    <div className="w-48 h-48 bg-white p-2 rounded-lg mb-6 shadow-2xl border-4 border-gold/50">
-                                        <img src="/images/qr_code.png" alt="QR Code" className="w-full h-full object-contain" />
-                                    </div>
-                                    <div className="flex gap-4">
-                                        <a
-                                            href="https://pay.cloudtips.ru/p/22e8f9f6"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-6 py-2 bg-amber hover:bg-amber/80 text-white font-bold uppercase rounded transition-all text-xs"
-                                        >
-                                            Перейти к оплате
-                                        </a>
-                                        <button
-                                            onClick={() => setShowDonationModal(false)}
-                                            className="px-6 py-2 border border-secondary text-ash hover:text-parchment uppercase text-xs rounded transition-all"
-                                        >
-                                            Закрыть
-                                        </button>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
+                            {/* Donation Modal Overhead */}
+                            <AnimatePresence>
+                                {showDonationModal && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="absolute inset-0 bg-primary/95 z-50 flex flex-col items-center justify-center p-6 text-center"
+                                    >
+                                        <h3 className="text-xl font-bold text-gold mb-4 font-serif uppercase tracking-widest">Поддержка Проекта</h3>
+                                        <p className="text-ash text-sm mb-6">
+                                            Если вам понравился оракул, вы можете поддержать развитие мастерской любой суммой.
+                                        </p>
+                                        <div className="w-48 h-48 bg-white p-2 rounded-lg mb-6 shadow-2xl border-4 border-gold/50">
+                                            <img src="/images/qr_code.png" alt="QR Code" className="w-full h-full object-contain" />
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <a
+                                                href="https://pay.cloudtips.ru/p/22e8f9f6"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="px-6 py-2 bg-amber hover:bg-amber/80 text-white font-bold uppercase rounded transition-all text-xs"
+                                            >
+                                                Перейти к оплате
+                                            </a>
+                                            <button
+                                                onClick={() => setShowDonationModal(false)}
+                                                className="px-6 py-2 border border-secondary text-ash hover:text-parchment uppercase text-xs rounded transition-all"
+                                            >
+                                                Закрыть
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
                     </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                )}
+            </AnimatePresence>
+            <DonationInquiry
+                isOpen={isDonationInquiryOpen}
+                onClose={() => setIsDonationInquiryOpen(false)}
+            />
+        </>
     );
 };
 
