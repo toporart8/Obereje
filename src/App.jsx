@@ -199,7 +199,7 @@ function App() {
         <div className="absolute inset-0 bg-radial-gradient-t from-transparent via-primary/80 to-primary pointer-events-none"></div>
       </div>
 
-      <div className="max-w-md mx-auto p-6 min-h-screen flex flex-col relative z-20">
+      <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col relative z-20">
 
         {/* Header Section */}
         <header className="text-center mb-12 relative z-10">
@@ -227,7 +227,7 @@ function App() {
           {/* Stitching Effect Detail */}
           <div className="absolute inset-[3px] border border-dashed border-bronze/20 rounded-[10px] pointer-events-none"></div>
 
-          <div className="bg-primary/30 rounded-[10px] p-6 relative overflow-hidden">
+          <div className="bg-primary/30 rounded-[10px] p-4 relative overflow-hidden">
             {/* Oracle Badge */}
             <div className="text-center mb-6 px-1">
               <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold via-parchment to-gold uppercase tracking-[0.25em] font-serif drop-shadow-sm w-full mb-6 max-w-full">
@@ -319,7 +319,7 @@ function App() {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60"></div>
                           </div>
 
-                          <div className="p-5 relative z-10 -mt-12 bg-gradient-to-t from-primary via-primary to-transparent pt-12">
+                          <div className="p-5 relative z-10 -mt-12 bg-gradient-to-t from-primary via-primary to-transparent pt-12 text-center">
                             <h4 className="text-parchment font-serif text-lg leading-tight mb-2 group-hover:text-amber transition-colors">
                               {recommendedProduct.name}
                             </h4>
@@ -344,7 +344,7 @@ function App() {
                                 Смотреть цену с личной скидкой:
                               </div>
 
-                              <div className="flex gap-3">
+                              <div className="grid grid-cols-2 gap-3">
                                 {recommendedProduct.links?.wb && (
                                   <a
                                     href={recommendedProduct.links.wb}

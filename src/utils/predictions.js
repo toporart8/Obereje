@@ -3,7 +3,7 @@ export const dailySigns = [
         id: 1,
         title: "Удар Перуна",
         text: "Время действовать молниеносно. Сомнения — твой враг. Руби с плеча.",
-        image: "/images/rune_1.jpg"
+        image: "/images/per1.png"
     },
     {
         id: 2,
@@ -15,108 +15,108 @@ export const dailySigns = [
         id: 3,
         title: "Оберег Лады",
         text: "Направь энергию в семью и дом. Там сегодня твой источник силы и покоя.",
-        image: "/images/rune_3.jpg"
+        image: "/images/lad1.png"
     },
     {
         id: 4,
         title: "Голос Стали",
         text: "Будь тверд в своих решениях. Мягкое железо не держит заточку.",
-        image: "/images/rune_4.jpg"
+        image: "/images/per1.png"
     },
     {
         id: 5,
         title: "Путь Волка",
         text: "Доверяй своей стае, но иди своим путем. Верность себе — превыше всего.",
-        image: "/images/rune_1.jpg"
+        image: "/images/vol1.png"
     },
     {
         id: 6,
         title: "Корни Дуба",
         text: "Попроси совета у старших или вспомни опыт предков. Ответ в прошлом.",
-        image: "/images/rune_2.jpg"
+        image: "/images/dub1.jpg"
     },
     {
         id: 7,
         title: "Искры Кузницы",
         text: "Придет новая идея. Не дай ей остыть, куй пока горячо!",
-        image: "/images/rune_3.jpg"
+        image: "/images/per1.png"
     },
     {
         id: 8,
         title: "Щит Предков",
         text: "Ты под защитой Рода. Ничего не бойся и иди вперед.",
-        image: "/images/rune_4.jpg"
+        image: "/images/shit1.jpg"
     },
     {
         id: 9,
         title: "Руна Дороги",
         text: "Движение — жизнь. Не стой на месте, начни путь, даже если цель пока туманна.",
-        image: "/images/rune_1.jpg"
+        image: "/images/per1.png"
     },
     {
         id: 10,
         title: "Знак Макоши",
         text: "Нити судьбы сплетаются в удачный узор. Жди важного знака к вечеру.",
-        image: "/images/rune_2.jpg"
+        image: "/images/mak1.png"
     },
     {
         id: 11,
         title: "Сила Медведя",
         text: "Сегодня твой день. Прояви напор и мощь, проломи стену проблем.",
-        image: "/images/rune_3.jpg"
+        image: "/images/med1.png"
     },
     {
         id: 12,
         title: "Глаз Ворона",
         text: "Посмотри на ситуацию сверху, отстранись. Ты видишь не всю картину.",
-        image: "/images/rune_4.jpg"
+        image: "/images/vor1.png"
     },
     {
         id: 13,
         title: "Чистый Огонь",
         text: "Сожги мосты, которые тянут назад. Очищение необходимо для роста.",
-        image: "/images/rune_1.jpg"
+        image: "/images/og1.png"
     },
     {
         id: 14,
         title: "Живая Вода",
         text: "Отдохни. Твоей силе нужно время на восстановление. Не спеши.",
-        image: "/images/rune_2.jpg"
+        image: "/images/vod1.png"
     },
     {
         id: 15,
         title: "Крепкий Узел",
         text: "Сдержи данное слово. Это укрепит твой дух и авторитет.",
-        image: "/images/rune_3.jpg"
+        image: "/images/uz1.png"
     },
     {
         id: 16,
         title: "Зов Ветра",
         text: "Жди перемен. Они будут быстрыми и свежими. Открой окно возможностям.",
-        image: "/images/rune_4.jpg"
+        image: "/images/vet1.png"
     },
     {
         id: 17,
         title: "Золото Скифов",
         text: "Удачный день для сделок и прибыли. Удача на стороне смелых.",
-        image: "/images/rune_1.jpg"
+        image: "/images/zol1.png"
     },
     {
         id: 18,
         title: "Тишина Леса",
         text: "Найди время для тишины. В городской суете правды не услышать.",
-        image: "/images/rune_2.jpg"
+        image: "/images/les1.png"
     },
     {
         id: 19,
         title: "Острие Топора",
         text: "Отсеки лишнее. Людей, мысли, дела. Оставь только суть.",
-        image: "/images/rune_3.jpg"
+        image: "/images/top1.png"
     },
     {
         id: 20,
         title: "Восход Ярилы",
         text: "Тьма отступает. Всё прояснится само собой, просто подожди рассвета.",
-        image: "/images/rune_4.jpg"
+        image: "/images/yar1.png"
     }
 ];
