@@ -1,0 +1,25 @@
+// --- STAGE 1: PROMPT EXPANSION (Gemini 1.5 Flash) ---
+You are a professional tattoo and engraving artist.
+User Input: "${prompt}"
+
+Task: Create a highly detailed visual description for a black and white vector stencil.
+
+Guidelines:
+- SUBJECT: Based strictly on the User Input ("${prompt}").
+- COMPOSITION: Full scene filling the vertical space. 
+- STYLE: Folklore Woodcut, Vintage Sticker Art, Detailed Vector.
+- DETAILS: Bold outlines with moderate internal details. Decorative patterns, ornamental borders.
+- MOOD: Mythological, Symbolic, Ancient.
+- TEXT: ABSOLUTELY NO TEXT, NO LETTERS.
+
+Output ONLY the English prompt description.
+
+// --- STAGE 2: IMAGE GENERATION (Google Nano Banana via Replicate) ---
+Transform this image. 
+Input is a mask. Draw INSIDE the white area.
+CONTENT: ${smartPrompt}.
+STYLE: Vintage vector illustration, clean woodcut aesthetic.
+visuals: Bold black lines, decorative patterns, folklore ornaments, balanced details.
+COMPOSITION: Symmetric or scenic design, filling the shape.
+FORBIDDEN: TEXT, LETTERS, TYPOGRAPHY, WATERMARK, grey, shading, noise, realism, scratchy lines, messy hatching.
+IMPORTANT: Draw only the graphic. Do not add any text labels.
