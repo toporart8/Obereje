@@ -53,9 +53,12 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     // 1. ПРОВЕРКА ПОДПИСИ CLOUDTIPS
-    // CloudTips присылает HMAC-SHA256 в заголовке X-Content-HMAC
     const signature = req.headers['x-content-hmac'];
     const secret = process.env.CLOUDTIPS_SECRET;
+
+    console.log('--- Webhook Start ---');
+    console.log('Body:', JSON.stringify(req.body));
+    console.log('Signature Header:', signature);
 
     if (secret) {
         const hash = crypto
@@ -64,25 +67,28 @@ export default async function handler(req, res) {
             .digest('base64');
 
         if (hash !== signature) {
-            console.error('Invalid signature');
+            console.error('Signature mismatch! Expected:', hash, 'Got:', signature);
             return res.status(403).json({ error: 'Invalid signature' });
         }
+        console.log('Signature verified successfully.');
+    } else {
+        console.warn('CLOUDTIPS_SECRET not set. Skipping verification.');
     }
 
     const { status, amount, payerEmail, invoiceId, transactionId } = req.body;
 
-    // 2. ПРОВЕРЯЕМ СТАТУС (У CloudTips статус успешной оплаты - "Success")
+    // 2. ПРОВЕРЯЕМ СТАТУС
     if (status !== 'Success') {
+        console.log('Payment status is not Success, ignoring:', status);
         return res.status(200).json({ status: 'ignored' });
     }
 
     try {
-        // invoiceId мы будем использовать для передачи Telegram Chat ID
         const tgChatId = invoiceId;
-
-        // Тип услуги: 100р - расклад, 500р+ - эскиз (настройте под свои цены)
         const type = amount >= 500 ? 'sketch' : 'master_spread';
         const newCode = generateRandomCode();
+
+        console.log(`Generating ${type} code for Invoice: ${tgChatId}, Email: ${payerEmail}`);
 
         // 3. СОХРАНЯЕМ В SUPABASE
         const { error } = await supabase
@@ -92,27 +98,41 @@ export default async function handler(req, res) {
                     code: newCode.toLowerCase(),
                     type: type,
                     use_limit: type === 'sketch' ? 5 : null,
-                    metadata: { transactionId, payerEmail, invoiceId }
+                    metadata: {
+                        transactionId,
+                        payerEmail,
+                        invoiceId: tgChatId,
+                        processed_at: new Date().toISOString()
+                    }
                 }
             ]);
 
-        if (error) throw error;
+        if (error) {
+            console.error('Database insertion error:', error);
+            throw error;
+        }
+
+        console.log(`Code ${newCode} saved successfully.`);
 
         // 4. УВЕДОМЛЕНИЯ
         const serviceName = type === 'sketch' ? 'Генератор Эскизов (5 шт)' : 'Мастерский Расклад (4 карты)';
         const msg = `🔥 ОПЛАТА ПОДТВЕРЖДЕНА!\n\nУслуга: ${serviceName}\nВаш персональный код доступа:\n\n${newCode}\n\nВведите его в приложении «Обережье», чтобы активировать доступ.`;
 
-        // В Telegram
-        if (tgChatId) await sendToTelegram(msg, tgChatId);
+        if (tgChatId && tgChatId !== 'manual_user') {
+            console.log(`Sending Telegram message to ${tgChatId}`);
+            await sendToTelegram(msg, tgChatId);
+        }
 
-        // На Email
-        if (payerEmail) await sendEmail(payerEmail, newCode, type);
+        if (payerEmail) {
+            console.log(`Sending Email to ${payerEmail}`);
+            await sendEmail(payerEmail, newCode, type);
+        }
 
-        // 5. ОТВЕТ
-        return res.status(200).json({ status: 'Success' });
+        console.log('--- Webhook Success ---');
+        return res.status(200).json({ status: 'Success', code: newCode });
 
     } catch (err) {
-        console.error('Webhook processing error:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error('Webhook ERROR:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err.message });
     }
 }
