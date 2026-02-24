@@ -114,13 +114,16 @@ const DonationInquiry = ({ isOpen, onClose }) => {
                                     <div className="h-[1px] w-24 mx-auto bg-gold/10"></div>
 
                                     {/* Action Button */}
-                                    <div className="pt-2 text-center flex flex-col items-center">
+                                    <div className="pt-2 text-center flex flex-col items-center w-full">
                                         {showPayButton ? (
                                             <a
                                                 href={`https://pay.cloudtips.ru/p/22e8f9f6?invoiceId=${new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                onClick={() => setShowPayButton(false)}
+                                                onClick={() => {
+                                                    // Даем браузеру время открыть вкладку перед тем, как убрать кнопку из DOM
+                                                    setTimeout(() => setShowPayButton(false), 300);
+                                                }}
                                                 className="block w-full py-4 bg-amber text-white font-bold uppercase text-center rounded-xl shadow-[0_4px_20px_rgba(220,38,38,0.3)] hover:shadow-[0_6px_25px_rgba(220,38,38,0.5)] transition-all border border-white/10"
                                             >
                                                 <span className="block text-lg tracking-widest mb-0.5">Восстановить равновесие</span>
