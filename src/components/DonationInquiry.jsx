@@ -35,6 +35,12 @@ const DonationInquiry = ({ isOpen, onClose }) => {
     };
 
     const checkPayment = async () => {
+        console.log('Check Payment clicked');
+        if (!supabase) {
+            alert('Ошибка: База данных не инициализирована. Проверьте переменные окружения VITE_SUPABASE_URL и VITE_SUPABASE_ANON_KEY в настройках Vercel.');
+            return;
+        }
+
         setIsChecking(true);
         const urlParams = new URLSearchParams(window.location.search);
         const tgId = urlParams.get('tg_id') || 'manual_user';
@@ -55,6 +61,7 @@ const DonationInquiry = ({ isOpen, onClose }) => {
             }
         } catch (err) {
             console.error('Check error:', err);
+            alert('Произошла ошибка при проверке платежа. Попробуйте позже.');
         } finally {
             setIsChecking(false);
         }
