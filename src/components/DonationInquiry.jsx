@@ -25,7 +25,7 @@ const DonationInquiry = ({ isOpen, onClose }) => {
             if (window.ctips) {
                 const widget = new window.ctips.CloudTipsSiteWidget();
                 widget.open({
-                    layoutId: "22e8f9f6",
+                    layoutId: "a3f6d1c6",
                     invoiceId: tgId,
                 });
             }
@@ -120,34 +120,51 @@ const DonationInquiry = ({ isOpen, onClose }) => {
 
                                     <div className="h-[1px] w-24 mx-auto bg-gold/10"></div>
 
-                                    {/* Action Button */}
-                                    <div className="pt-2 text-center flex flex-col items-center w-full">
-                                        {showPayButton ? (
-                                            <a
-                                                href={`https://pay.cloudtips.ru/p/22e8f9f6?invoiceId=${new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={() => {
-                                                    // Даем браузеру время открыть вкладку перед тем, как убрать кнопку из DOM
-                                                    setTimeout(() => setShowPayButton(false), 300);
-                                                }}
-                                                className="block w-full py-4 bg-amber text-white font-bold uppercase text-center rounded-xl shadow-[0_4px_20px_rgba(220,38,38,0.3)] hover:shadow-[0_6px_25px_rgba(220,38,38,0.5)] transition-all border border-white/10"
+                                    {/* Action Buttons */}
+                                    <div className="pt-2 text-center flex flex-col items-center w-full space-y-4">
+                                        {/* YooMoney Quickpay Form */}
+                                        <form
+                                            action="https://yoomoney.ru/quickpay/confirm.xml"
+                                            method="POST"
+                                            target="_blank"
+                                            className="w-full"
+                                        >
+                                            <input type="hidden" name="receiver" value="4100118949508098" />
+                                            <input type="hidden" name="label" value={new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'} />
+                                            <input type="hidden" name="quickpay-form" value="button" />
+                                            <input type="hidden" name="sum" value="500" data-type="number" />
+                                            <input type="hidden" name="successURL" value={window.location.origin} />
+
+                                            <button
+                                                type="submit"
+                                                className="block w-full py-4 bg-[#8024BE] text-white font-bold uppercase text-center rounded-xl shadow-[0_4px_20px_rgba(128,36,190,0.3)] hover:shadow-[0_6px_25px_rgba(128,36,190,0.5)] transition-all border border-white/10"
                                             >
                                                 <span className="block text-lg tracking-widest mb-0.5">Восстановить равновесие</span>
-                                                <span className="block text-xs opacity-70 normal-case font-normal">любая сумма от сердца</span>
-                                            </a>
-                                        ) : (
-                                            <button
-                                                onClick={checkPayment}
-                                                disabled={isChecking}
-                                                className="block w-full py-4 bg-gold text-secondary font-bold uppercase text-center rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.3)] transition-all border border-white/10 animate-pulse"
-                                            >
-                                                <span className="block text-lg tracking-widest mb-0.5">
-                                                    {isChecking ? 'Проверяю...' : 'Я оплатил, получить код'}
-                                                </span>
+                                                <span className="block text-xs opacity-70 normal-case font-normal">оплата через ЮMoney / Картой</span>
                                             </button>
-                                        )}
-                                        <p className="text-gold/60 text-xs mt-6 uppercase tracking-[0.25em] font-serif font-bold">
+                                        </form>
+
+                                        <div className="flex items-center space-x-4 w-full opacity-30">
+                                            <div className="h-px flex-1 bg-gold"></div>
+                                            <span className="text-[10px] text-gold uppercase tracking-tighter">затем нажмите</span>
+                                            <div className="h-px flex-1 bg-gold"></div>
+                                        </div>
+
+                                        {/* Кнопка проверки */}
+                                        <button
+                                            onClick={checkPayment}
+                                            disabled={isChecking}
+                                            className={`block w-full py-4 font-bold uppercase text-center rounded-xl transition-all border border-white/10 ${isChecking
+                                                ? 'bg-gold/20 text-gold/40 cursor-not-allowed'
+                                                : 'bg-gold text-secondary shadow-[0_4px_20px_rgba(212,175,55,0.2)] hover:bg-gold/90'
+                                                }`}
+                                        >
+                                            <span className="block text-lg tracking-widest">
+                                                {isChecking ? 'Минутку...' : 'Я оплатил, получить код'}
+                                            </span>
+                                        </button>
+
+                                        <p className="text-gold/60 text-[10px] mt-2 uppercase tracking-[0.25em] font-serif font-bold">
                                             код придет также в Telegram и на Email
                                         </p>
                                     </div>
