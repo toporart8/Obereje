@@ -499,7 +499,7 @@ const DailyOracle = ({ isOpen, onClose, telegramLink }) => {
                                         </div>
                                         <div className="flex gap-4">
                                             <a
-                                                href="https://pay.cloudtips.ru/p/22e8f9f6"
+                                                href={`https://yoomoney.ru/quickpay/confirm.xml?receiver=4100118949508098&quickpay-form=button&sum=500&label=${new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'}&successURL=${encodeURIComponent(window.location.origin)}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="px-6 py-2 bg-amber hover:bg-amber/80 text-white font-bold uppercase rounded transition-all text-xs"

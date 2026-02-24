@@ -79,7 +79,7 @@ const LegacyBook = ({ isOpen, onClose }) => {
                             {/* Action Button */}
                             <div className="pt-4">
                                 <a
-                                    href="https://pay.cloudtips.ru/p/22e8f9f6"
+                                    href={`https://yoomoney.ru/quickpay/confirm.xml?receiver=4100118949508098&quickpay-form=button&sum=500&label=${new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'}&successURL=${encodeURIComponent(window.location.origin)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block w-full py-4 bg-gradient-to-r from-bronze to-amber text-white font-bold uppercase tracking-widest text-center rounded-lg shadow-lg hover:shadow-red-900/40 transition-all border-t border-white/20"

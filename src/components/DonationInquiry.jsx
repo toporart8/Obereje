@@ -6,33 +6,6 @@ import { supabase } from '../utils/supabase';
 const DonationInquiry = ({ isOpen, onClose }) => {
     const [isChecking, setIsChecking] = React.useState(false);
     const [generatedCode, setGeneratedCode] = React.useState(null);
-    const [showPayButton, setShowPayButton] = React.useState(true);
-
-    const handlePay = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tgId = urlParams.get('tg_id') || 'manual_user';
-
-        // Мы всегда открываем ссылку в новой вкладке как страховку, 
-        // так как виджеты часто блокируются браузерами или не грузятся.
-        const paymentUrl = `https://pay.cloudtips.ru/p/22e8f9f6?invoiceId=${tgId}`;
-        window.open(paymentUrl, '_blank');
-
-        // Переключаем кнопку, чтобы пользователь мог подтвердить оплату
-        setShowPayButton(false);
-
-        // Попытка запустить виджет (если он работает, он перекроет окно)
-        try {
-            if (window.ctips) {
-                const widget = new window.ctips.CloudTipsSiteWidget();
-                widget.open({
-                    layoutId: "a3f6d1c6",
-                    invoiceId: tgId,
-                });
-            }
-        } catch (e) {
-            console.error('Widget failed to open:', e);
-        }
-    };
 
     const checkPayment = async () => {
         console.log('Check Payment clicked');
@@ -123,26 +96,15 @@ const DonationInquiry = ({ isOpen, onClose }) => {
                                     {/* Action Buttons */}
                                     <div className="pt-2 text-center flex flex-col items-center w-full space-y-4">
                                         {/* YooMoney Quickpay Form */}
-                                        <form
-                                            action="https://yoomoney.ru/quickpay/confirm.xml"
-                                            method="POST"
+                                        <a
+                                            href={`https://yoomoney.ru/quickpay/confirm.xml?receiver=4100118949508098&quickpay-form=button&sum=500&label=${new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'}&successURL=${encodeURIComponent(window.location.origin)}`}
                                             target="_blank"
-                                            className="w-full"
+                                            rel="noopener noreferrer"
+                                            className="block w-full py-4 bg-[#8024BE] text-white font-bold uppercase text-center rounded-xl shadow-[0_4px_20px_rgba(128,36,190,0.3)] hover:shadow-[0_6px_25px_rgba(128,36,190,0.5)] transition-all border border-white/10"
                                         >
-                                            <input type="hidden" name="receiver" value="4100118949508098" />
-                                            <input type="hidden" name="label" value={new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'} />
-                                            <input type="hidden" name="quickpay-form" value="button" />
-                                            <input type="hidden" name="sum" value="500" data-type="number" />
-                                            <input type="hidden" name="successURL" value={window.location.origin} />
-
-                                            <button
-                                                type="submit"
-                                                className="block w-full py-4 bg-[#8024BE] text-white font-bold uppercase text-center rounded-xl shadow-[0_4px_20px_rgba(128,36,190,0.3)] hover:shadow-[0_6px_25px_rgba(128,36,190,0.5)] transition-all border border-white/10"
-                                            >
-                                                <span className="block text-lg tracking-widest mb-0.5">Восстановить равновесие</span>
-                                                <span className="block text-xs opacity-70 normal-case font-normal">оплата через ЮMoney / Картой</span>
-                                            </button>
-                                        </form>
+                                            <span className="block text-lg tracking-widest mb-0.5">Восстановить равновесие</span>
+                                            <span className="block text-xs opacity-70 normal-case font-normal">оплата через ЮMoney / Картой</span>
+                                        </a>
 
                                         <div className="flex items-center space-x-4 w-full opacity-30">
                                             <div className="h-px flex-1 bg-gold"></div>
