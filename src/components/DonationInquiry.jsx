@@ -116,13 +116,16 @@ const DonationInquiry = ({ isOpen, onClose }) => {
                                     {/* Action Button */}
                                     <div className="pt-2 text-center flex flex-col items-center">
                                         {showPayButton ? (
-                                            <button
-                                                onClick={handlePay}
+                                            <a
+                                                href={`https://pay.cloudtips.ru/p/22e8f9f6?invoiceId=${new URLSearchParams(window.location.search).get('tg_id') || 'manual_user'}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={() => setShowPayButton(false)}
                                                 className="block w-full py-4 bg-amber text-white font-bold uppercase text-center rounded-xl shadow-[0_4px_20px_rgba(220,38,38,0.3)] hover:shadow-[0_6px_25px_rgba(220,38,38,0.5)] transition-all border border-white/10"
                                             >
                                                 <span className="block text-lg tracking-widest mb-0.5">Восстановить равновесие</span>
                                                 <span className="block text-xs opacity-70 normal-case font-normal">любая сумма от сердца</span>
-                                            </button>
+                                            </a>
                                         ) : (
                                             <button
                                                 onClick={checkPayment}
