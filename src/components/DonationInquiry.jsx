@@ -9,20 +9,28 @@ const DonationInquiry = ({ isOpen, onClose }) => {
     const [showPayButton, setShowPayButton] = React.useState(true);
 
     const handlePay = () => {
-        // Получаем Telegram Chat ID из URL (если приложение открыто в TG)
         const urlParams = new URLSearchParams(window.location.search);
-        const tgId = urlParams.get('tg_id') || 'manual_user'; // fallback
+        const tgId = urlParams.get('tg_id') || 'manual_user';
 
-        if (window.ctips) {
-            const widget = new window.ctips.CloudTipsSiteWidget();
-            widget.open({
-                layoutId: "22e8f9f6",
-                invoiceId: tgId, // Передаем как ID транзакции для связи
-            });
-            setShowPayButton(false);
-        } else {
-            // Если скрипт не загрузился, открываем просто ссылку
-            window.open('https://pay.cloudtips.ru/p/22e8f9f6', '_blank');
+        // Мы всегда открываем ссылку в новой вкладке как страховку, 
+        // так как виджеты часто блокируются браузерами или не грузятся.
+        const paymentUrl = `https://pay.cloudtips.ru/p/22e8f9f6?invoiceId=${tgId}`;
+        window.open(paymentUrl, '_blank');
+
+        // Переключаем кнопку, чтобы пользователь мог подтвердить оплату
+        setShowPayButton(false);
+
+        // Попытка запустить виджет (если он работает, он перекроет окно)
+        try {
+            if (window.ctips) {
+                const widget = new window.ctips.CloudTipsSiteWidget();
+                widget.open({
+                    layoutId: "22e8f9f6",
+                    invoiceId: tgId,
+                });
+            }
+        } catch (e) {
+            console.error('Widget failed to open:', e);
         }
     };
 
